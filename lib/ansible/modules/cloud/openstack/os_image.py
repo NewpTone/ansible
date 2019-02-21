@@ -120,6 +120,7 @@ def main():
         min_ram=dict(type='int', default=0),
         is_public=dict(type='bool', default=False),
         filename=dict(default=None),
+        location=dict(default=None),
         ramdisk=dict(default=None),
         kernel=dict(default=None),
         properties=dict(type='dict', default={}),
@@ -142,18 +143,32 @@ def main():
                 kwargs = {}
                 if module.params['id'] is not None:
                     kwargs['id'] = module.params['id']
-                image = cloud.create_image(
-                    name=module.params['name'],
-                    filename=module.params['filename'],
-                    disk_format=module.params['disk_format'],
-                    container_format=module.params['container_format'],
-                    wait=module.params['wait'],
-                    timeout=module.params['timeout'],
-                    is_public=module.params['is_public'],
-                    min_disk=module.params['min_disk'],
-                    min_ram=module.params['min_ram'],
-                    **kwargs
-                )
+                if module.params['location'] is not None:
+                    image = cloud.create_image(
+                        name=module.params['name'],
+                        location=module.params['location'],
+                        disk_format=module.params['disk_format'],
+                        container_format=module.params['container_format'],
+                        wait=module.params['wait'],
+                        timeout=module.params['timeout'],
+                        is_public=module.params['is_public'],
+                        min_disk=module.params['min_disk'],
+                        min_ram=module.params['min_ram'],
+                        **kwargs
+                    )
+                else:
+                    image = cloud.create_image(
+                        name=module.params['name'],
+                        filename=module.params['filename'],
+                        disk_format=module.params['disk_format'],
+                        container_format=module.params['container_format'],
+                        wait=module.params['wait'],
+                        timeout=module.params['timeout'],
+                        is_public=module.params['is_public'],
+                        min_disk=module.params['min_disk'],
+                        min_ram=module.params['min_ram'],
+                        **kwargs
+                    )
                 changed = True
                 if not module.params['wait']:
                     module.exit_json(changed=changed, image=image, id=image.id)
